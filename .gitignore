@@ -3,5 +3,5 @@
 .env
 .data/DS_Store
 .DS_Store
-notebooks/.ipynb_checkpoints/Untitled-checkpoint.ipynb
+notebooks/.ipynb_checkpoints/process_news_raw_data-checkpoint.ipynb
 
