@@ -1,4 +1,7 @@
 .idea
 .ve
 .env
+.data/DS_Store
 .DS_Store
+notebooks/.ipynb_checkpoints/Untitled-checkpoint.ipynb
+
