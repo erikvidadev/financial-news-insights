@@ -1,2 +1,4 @@
 .idea
 .ve
+.env
+.DS_Store

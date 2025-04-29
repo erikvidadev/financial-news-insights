@@ -75,4 +75,71 @@ This project collects, cleans and analyses stock prices and related news in an a
 
 ---
 
-Ez a projekt lehetőséget ad arra, hogy gyakorlatban alkalmazd a pandas és numpy könyvtárakat, valamint elmélyítsd tudásodat az adatgyűjtés, -feldolgozás, -elemzés és -vizualizáció terén. A projekt során szerzett tapasztalatok hasznosak lesznek a jövőbeni adatbázis-kezelési, adatvizualizációs és gépi tanulási feladatokhoz.
+Az alábbiakban bemutatok egy részletes listát a pénzügyi és üzleti elemzési riportok típusairól, amelyek hasznosak lehetnek a projekted során. Ezek a riportok segítenek megérteni a vállalat pénzügyi helyzetét, teljesítményét és jövőbeli kilátásait.
+
+---
+
+## 📊 Fő pénzügyi riportok
+
+1. **Mérleg (Balance Sheet)**
+   -A vállalat eszközeit, forrásait és saját tőkéjét mutatja egy adott időpontban
+   -Segít megérteni a vállalat likviditását és tőkeszerkezetét
+   -Kulcsfontosságú mutatók: eszközök, kötelezettségek, saját tőke
+
+2. **Eredménykimutatás (Income Statement)**
+   -A bevételek, költségek és nyereség vagy veszteség alakulását mutatja egy adott időszakban
+   -Segít értékelni a vállalat jövedelmezőségét és működési hatékonyságát
+   -Kulcsfontosságú mutatók: bruttó nyereség, üzemeltetési költségek, nettó nyereség
+
+3. **Cash Flow kimutatás (Cash Flow Statement)**
+   -A pénzeszközök beáramlását és kiáramlását mutatja három fő tevékenységi kör szerint: működés, befektetés, finanszírozás
+   -Segít megérteni a vállalat pénzügyi egészségét és likviditását
+   -Kulcsfontosságú mutatók: működési cash flow, befektetési cash flow, finanszírozási cash flow
+
+4. **Saját tőke változásainak kimutatása (Statement of Shareholders' Equity)**
+   -A vállalat saját tőkéjének változásait mutatja egy adott időszakban
+   -Segít megérteni a részvényesi érdekeltségek alakulását és a tőkeemeléseket vagy -csökkentéseket
+   -Kulcsfontosságú mutatók: tőkeemelés, osztalékfizetés, részvénykibocsátás
+
+---
+
+## 📈 Elemző és kiegészítő riportok
+
+5. **Kimutatás a működési eredményről (Operating Profit Report)**
+    A vállalat fő tevékenységéből származó nyereséget mutatj.
+    Segít megérteni a vállalat alaptevékenységeinek jövedelmezőségé.
+    Kulcsfontosságú mutatók: működési nyereség, működési költsége.
+
+6. **Bruttó árrés elemzés (Gross Margin Analysis)**
+    A bruttó nyereség és a bevételek arányát mutatj.
+    Segít megérteni a termelési költségek hatékonyságát és az árképzési stratégiá.
+    Kulcsfontosságú mutatók: bruttó árrés, eladási ár, előállítási költsé.
+
+7. **Részvényesi hozam elemzés (Shareholder Return Analysis)**
+    A részvényesek által elért hozamokat mutatj.
+    Segít értékelni a vállalat részvényesi értékteremtésé.
+    Kulcsfontosságú mutatók: osztalék, részvényárfolyam növekedé.
+
+8. **Likviditási mutatók elemzése (Liquidity Ratios Analysis)**
+    A vállalat rövid távú pénzügyi helyzetét mutatj.
+    Segít megérteni a vállalat képességét a rövid távú kötelezettségek teljesítésér.
+    Kulcsfontosságú mutatók: gyorsráta, likviditási mutat.
+
+9. **Adósság és tőkeáttétel elemzés (Debt and Leverage Analysis)**
+    A vállalat adósságállományát és tőkeáttételi mutatóit vizsgálj.
+    Segít megérteni a vállalat pénzügyi kockázatait és tőke struktúrájá.
+    Kulcsfontosságú mutatók: adósság/ saját tőke arány, kamatfedezeti mutat.
+
+10. **Részvényárfolyam elemzés (Stock Price Analysis)**
+    - A vállalat részvényárfolyamának alakulását mutatja.
+    - Segít megérteni a piac által a vállalatra adott értékelést.
+    - Kulcsfontosságú mutatók: részvényárfolyam, piaci kapitalizáció.
+
+11. **Pénzügyi előrejelzés (Financial Forecasting)**
+    - A jövőbeli pénzügyi teljesítmény előrejelzését tartalmazza.
+    - Segít a stratégiai döntéshozatalban és a tervezésben.
+    - Kulcsfontosságú mutatók: bevételi előrejelzés, költségvetés, nyereség előrejelzés.
+
+12. **Kockázatelemzés (Risk Analysis)**
+    - A vállalat pénzügyi és működési kockázatait vizsgálja.
+    - Segít azonosítani és kezelni a potenciális veszély 
