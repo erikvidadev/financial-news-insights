@@ -13,16 +13,14 @@ class NewsApiClient:
     def __init__(
             self,
             search_query: str,
-            source_domain: str,
             start_date: str,
             end_date: str,
-            categories: List[str] = None
     ) -> None:
         """
         Initialize the News API client.
 
         Args:
-            source_domain: The domain to fetch news from
+            source_domains: The domain to fetch news from
             search_query: The keyword to search for in news articles
             categories: List of news categories to filter by
             start_date: The beginning of the search
@@ -31,9 +29,7 @@ class NewsApiClient:
         load_dotenv()
         self._api_key = os.getenv("NEWS_API_KEY")
         self.endpoint = "https://newsapi.org/v2/everything"
-        self.source_domain = source_domain
         self.search_query = search_query
-        self.categories = categories
         self.start_date = start_date
         self.end_date = end_date
 
@@ -46,12 +42,12 @@ class NewsApiClient:
         """
         url = (
             f'{self.endpoint}'
-            f'?domains={self.source_domain}'
-            f'&q={self.search_query}'
+            f'?q={self.search_query}'
             f'&from={self.start_date}'
             f'&to={self.end_date}'
             f'&apiKey={self._api_key}'
         )
+        print(url)
         return requests.get(url)
 
     def get_articles(self) -> Dict[str, Any]:
@@ -83,7 +79,7 @@ class NewsApiClient:
         """
         articles = self.get_articles()
         if not filename:
-            filename = f"data/raw/news_response_{self.start_date}_{self.end_date}.json"
+            filename = f"data/raw/news/news_response_{self.start_date}_{self.end_date}.json"
 
         os.makedirs(os.path.dirname(filename), exist_ok=True)
 
