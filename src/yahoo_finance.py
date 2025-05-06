@@ -58,13 +58,3 @@ class YahooFinanceClient:
         except Exception as e:
             raise Exception(f"Error fetching stock data: {str(e)}")
 
-
-#Example
-if __name__ == "__main__":
-    client = YahooFinanceClient(
-    stock_symbol="AAPL",
-    period="30d",
-    interval="1h"
-    )
-
-    print(client.get_stock_data())

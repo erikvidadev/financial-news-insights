@@ -1,12 +1,13 @@
 from news_api import NewsApiClient
 from src.news_data_handler import NewsDataHandler
+from src.stock_data_handler import StockDataHandler
 from src.yahoo_finance import YahooFinanceClient
 
 
 articles_from_newsAPI = NewsApiClient(
     search_query="apple",
     categories="tech",
-    search_days=3,
+    search_days=30,
 )
 
 news_data_handler = NewsDataHandler()
@@ -25,3 +26,9 @@ stock_data_from_yahoo = YahooFinanceClient(
     period="30d",
     interval="1h"
 )
+
+stock_data_handler = StockDataHandler()
+
+stocks = stock_data_from_yahoo.get_stock_data()
+stock_data_handler.export_to_csv(stocks)
+stock_data_handler.export_to_excel(stocks)
