@@ -111,14 +111,3 @@ class NewsApiClient:
                 "exception": str(e),
                 "message": "Failed to parse response"
             }
-
-
-# Example
-if __name__ == "__main__":
-    client = NewsApiClient(
-        search_query="apple",
-        categories=["tech", "business"],  # Can now handle lists
-        search_days=3,
-    )
-    print(client.get_articles())
-
