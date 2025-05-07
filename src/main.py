@@ -19,16 +19,15 @@ processed_articles = news_data_handler.process_raw_data(raw_articles)
 news_data_handler.export_articles(processed_articles)
 
 
-"""
+
 stock_data_from_yahoo = YahooFinanceClient(
     stock_symbol="AAPL",
-    period="30d",
+    period="1d",
     interval="1h"
 )
 
 stock_data_handler = StockDataHandler()
 
-stocks = stock_data_from_yahoo.get_stock_data()
-stock_data_handler.export_to_csv(stocks)
-stock_data_handler.export_to_excel(stocks)
-"""
+stocks = stock_data_from_yahoo.fetch_stock_data()
+stock_data_handler.export_to_all_formats(stocks)
+
