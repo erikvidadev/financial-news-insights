@@ -8,9 +8,9 @@ import pandas as pd
 
 class NewsDataHandler:
     def __init__(self):
-        self.raw_input_path: str = f"./data/raw/news/articles_{datetime.datetime.now().strftime('%Y.%m.%d_%H.%M')}.json"
-        self.csv_output_path: str = f"./data/processed/news/articles_{datetime.datetime.now().strftime('%Y.%m.%d_%H.%M')}.csv"
-        self.excel_output_path: str = f"./data/processed/news/articles_{datetime.datetime.now().strftime('%Y.%m.%d_%H.%M')}.xlsx"
+        self.raw_input_path: str = f"./data/raw/news/raw_articles.json"
+        self.csv_output_path: str = f"./data/processed/news/articles.csv"
+        self.excel_output_path: str = f"./data/processed/news/articles.xlsx"
 
     def save_raw_data(self, data_to_save: Dict[str, Any]) -> str:
         """

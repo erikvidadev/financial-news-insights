@@ -6,8 +6,8 @@ from pandas import DataFrame
 
 class StockDataHandler:
     def __init__(self):
-        self.csv_path: str = f"./data/processed/stock/stock_data_{datetime.datetime.now().strftime('%Y.%m.%d_%H.%M')}.csv"
-        self.excel_path: str = f"./data/processed/stock/stock_data_{datetime.datetime.now().strftime('%Y.%m.%d_%H.%M')}.xlsx"
+        self.csv_path: str = f"./data/processed/stock/stock_data.csv"
+        self.excel_path: str = f"./data/processed/stock/stock_data.xlsx"
 
     def export_to_csv(self, df: DataFrame) -> bool:
         """
