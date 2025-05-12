@@ -13,7 +13,7 @@ articles_from_newsAPI = NewsApiClient(
 news_data_handler = NewsDataHandler()
 
 
-articles = articles_from_newsAPI.get_articles()
+articles = articles_from_newsAPI.extract_full_article_texts()
 raw_articles = news_data_handler.save_raw_data(articles)
 processed_articles = news_data_handler.process_raw_data(raw_articles)
 news_data_handler.export_articles(processed_articles)

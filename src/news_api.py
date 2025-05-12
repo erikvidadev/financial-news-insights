@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Dict, Any, Union, Optional, List
+from readability import Document
+from lxml import html
 
 import requests
 from dotenv import load_dotenv
@@ -40,6 +42,7 @@ class NewsApiClient:
         self.categories = categories
         self.end_date = self._get_end_date()
         self.start_date = self._get_start_date(search_days)
+        self.language: str =  "en"
 
     def fetch_articles(self) -> Response:
         """
@@ -52,6 +55,7 @@ class NewsApiClient:
             f'{self.endpoint}'
             f'?q={self.search_query}'
             f'&categories={self.categories}'
+            f'&language={self.language}'
             f'&from={self.start_date}'
             f'&to={self._get_end_date()}'
             f'&apiKey={self._api_key}'
@@ -111,3 +115,41 @@ class NewsApiClient:
                 "exception": str(e),
                 "message": "Failed to parse response"
             }
+
+    def extract_full_article_texts(self,) -> List[Dict[str, Any]]:
+        """
+        Given a list of articles (from NewsAPI), fetch and extract full article content using readability.
+
+        Args:
+            articles: A list of article dictionaries from NewsAPI
+
+        Returns:
+            List[Dict[str, Any]]: List of articles with full text added (under key 'full_text')
+        """
+        articles = self.get_articles().get("articles", [])
+
+        full_articles = []
+
+        for article in articles:
+            article_url = article.get("url")
+            if not article_url:
+                continue
+
+            try:
+                response = requests.get(article_url, timeout=10)
+                response.raise_for_status()
+                doc = Document(response.text)
+                content_html = doc.summary()
+                content_text = html.fromstring(content_html).text_content()
+
+                article['full_text'] = content_text.strip()
+                full_articles.append(article)
+
+            except Exception as e:
+                article['full_text'] = f"[Error fetching content: {e}]"
+                full_articles.append(article)
+
+        return full_articles
+
+
+

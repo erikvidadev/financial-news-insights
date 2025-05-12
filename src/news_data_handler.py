@@ -1,7 +1,7 @@
 import datetime
 import json
 import os
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, Optional, List, Union
 
 import pandas as pd
 
@@ -12,12 +12,12 @@ class NewsDataHandler:
         self.csv_output_path: str = f"./data/processed/news/articles.csv"
         self.excel_output_path: str = f"./data/processed/news/articles.xlsx"
 
-    def save_raw_data(self, data_to_save: Dict[str, Any]) -> str:
+    def save_raw_data(self, data_to_save: Union[Dict[str, Any], List[Dict[str, Any]]]) -> str:
         """
         Save the JSON response from the News API to a file.
 
         Args:
-            data_to_save (Dict[str, Any]): The JSON data to save.
+            data_to_save (Union[Dict[str, Any], List[Dict[str, Any]]]): The JSON data to save.
 
         Returns:
             str: The name of the file where the data was saved.
@@ -26,14 +26,14 @@ class NewsDataHandler:
             IOError: If there is an error writing to the file.
             TypeError: If the data cannot be serialized to JSON.
         """
-        if not isinstance(data_to_save, dict):
-            raise TypeError("Data to save must be a dictionary")
+        if not isinstance(data_to_save, (dict, list)):
+            raise TypeError("Data to save must be a dictionary or list of dictionaries")
+        if isinstance(data_to_save, list) and not all(isinstance(item, dict) for item in data_to_save):
+            raise TypeError("All items in the list must be dictionaries")
 
         try:
-            # Ensure the directory exists
             os.makedirs(os.path.dirname(self.raw_input_path), exist_ok=True)
 
-            # Write the data to file
             with open(self.raw_input_path, "w", encoding="utf-8") as f:
                 json.dump(data_to_save, f, ensure_ascii=False, indent=4)
 
@@ -66,13 +66,20 @@ class NewsDataHandler:
             with open(file_path, 'r', encoding='utf-8') as file:
                 data = json.load(file)
 
-            articles = data.get('articles', [])
+            # Handle if data is a dict with 'articles' or just a list of articles
+            if isinstance(data, dict):
+                articles = data.get('articles', [])
+            elif isinstance(data, list):
+                articles = data
+            else:
+                raise TypeError("Unexpected data format: Expected dict or list")
+
             if not articles:
-                return pd.DataFrame()  # Return empty DataFrame if no articles
+                return pd.DataFrame()
 
             articles_dataframe = pd.DataFrame(articles)
 
-            # Handle nested source column (if exists)
+            # Handle nested 'source' field if exists
             if 'source' in articles_dataframe.columns:
                 articles_dataframe['source_name'] = articles_dataframe['source'].apply(
                     lambda x: x.get('name') if isinstance(x, dict) else None
@@ -81,11 +88,7 @@ class NewsDataHandler:
 
             return articles_dataframe
 
-        except json.JSONDecodeError as e:
-            raise json.JSONDecodeError(
-                f"Invalid JSON in file {file_path}: {str(e)}", e.doc, e.pos
-            )
-        except Exception as e:
+        except (json.JSONDecodeError, TypeError) as e:
             raise RuntimeError(f"Error processing news data: {str(e)}")
 
     def export_articles(self, df: pd.DataFrame, formats: Optional[List[str]] = None) -> Dict[str, bool]:
