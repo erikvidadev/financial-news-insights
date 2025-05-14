@@ -22,8 +22,8 @@ news_data_handler.export_articles(processed_articles)
 
 stock_data_from_yahoo = YahooFinanceClient(
     stock_symbol="AAPL",
-    period="1d",
-    interval="1h"
+    period="1mo",
+    interval="1d"
 )
 
 stock_data_handler = StockDataHandler()
