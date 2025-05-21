@@ -116,12 +116,9 @@ class NewsApiClient:
                 "message": "Failed to parse response"
             }
 
-    def extract_full_article_texts(self,) -> List[Dict[str, Any]]:
+    def extract_full_articles(self, ) -> List[Dict[str, Any]]:
         """
         Given a list of articles (from NewsAPI), fetch and extract full article content using readability.
-
-        Args:
-            articles: A list of article dictionaries from NewsAPI
 
         Returns:
             List[Dict[str, Any]]: List of articles with full text added (under key 'full_text')
@@ -138,8 +135,7 @@ class NewsApiClient:
             try:
                 response = requests.get(article_url, timeout=10)
                 response.raise_for_status()
-                doc = Document(response.text)
-                content_html = doc.summary()
+                content_html = Document(response.text).summary()
                 content_text = html.fromstring(content_html).text_content()
 
                 article['full_text'] = content_text.strip()

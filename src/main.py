@@ -1,5 +1,6 @@
 from news_api import NewsApiClient
 from src.news_data_handler import NewsDataHandler
+from src.sentiment_analysis import SentimentAnalyzer
 from src.stock_data_handler import StockDataHandler
 from src.yahoo_finance import YahooFinanceClient
 
@@ -13,11 +14,11 @@ articles_from_newsAPI = NewsApiClient(
 news_data_handler = NewsDataHandler()
 
 
-articles = articles_from_newsAPI.extract_full_article_texts()
+articles = articles_from_newsAPI.extract_full_articles()
 raw_articles = news_data_handler.save_raw_data(articles)
 processed_articles = news_data_handler.process_raw_data(raw_articles)
-news_data_handler.export_articles(processed_articles)
 
+news_data_handler.export_articles(processed_articles)
 
 
 stock_data_from_yahoo = YahooFinanceClient(

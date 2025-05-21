@@ -1,4 +1,3 @@
-import datetime
 import json
 import os
 from typing import Any, Dict, Optional, List, Union
@@ -8,9 +7,9 @@ import pandas as pd
 
 class NewsDataHandler:
     def __init__(self):
-        self.raw_input_path: str = f"./data/raw/news/raw_articles.json"
-        self.csv_output_path: str = f"./data/processed/news/articles.csv"
-        self.excel_output_path: str = f"./data/processed/news/articles.xlsx"
+        self.raw_output_path: str = f"./data/raw/raw_articles.json"
+        self.processed_csv_output_path: str = f"./data/processed/articles.csv"
+        self._processed_excel_output_path: str = f"./data/processed/articles.xlsx"
 
     def save_raw_data(self, data_to_save: Union[Dict[str, Any], List[Dict[str, Any]]]) -> str:
         """
@@ -32,15 +31,15 @@ class NewsDataHandler:
             raise TypeError("All items in the list must be dictionaries")
 
         try:
-            os.makedirs(os.path.dirname(self.raw_input_path), exist_ok=True)
+            os.makedirs(os.path.dirname(self.raw_output_path), exist_ok=True)
 
-            with open(self.raw_input_path, "w", encoding="utf-8") as f:
+            with open(self.raw_output_path, "w", encoding="utf-8") as f:
                 json.dump(data_to_save, f, ensure_ascii=False, indent=4)
 
-            return self.raw_input_path
+            return self.raw_output_path
 
         except (IOError, OSError) as e:
-            raise IOError(f"Failed to save data to {self.raw_input_path}: {str(e)}")
+            raise IOError(f"Failed to save data to {self.raw_output_path}: {str(e)}")
         except TypeError as e:
             raise TypeError(f"Failed to serialize data to JSON: {str(e)}")
 
@@ -107,7 +106,7 @@ class NewsDataHandler:
             ValueError: If an invalid format is specified.
         """
         if formats is None:
-            formats = ['csv', 'excel']
+            formats = ['csv'] # add excel if needed
 
         results = {}
 
@@ -132,11 +131,11 @@ class NewsDataHandler:
             True if export was successful, False otherwise.
         """
         try:
-            os.makedirs(os.path.dirname(self.csv_output_path), exist_ok=True)
-            articles_dataframe.to_csv(self.csv_output_path, index=False, encoding='utf-8')
+            os.makedirs(os.path.dirname(self.processed_csv_output_path), exist_ok=True)
+            articles_dataframe.to_csv(self.processed_csv_output_path, index=False, encoding='utf-8')
             return True
         except Exception as e:
-            print(f"Error exporting to CSV {self.csv_output_path}: {e}")
+            print(f"Error exporting to CSV {self.processed_csv_output_path}: {e}")
             return False
 
     def _export_to_excel(self, articles_dataframe: pd.DataFrame) -> bool:
@@ -150,9 +149,9 @@ class NewsDataHandler:
             True if export was successful, False otherwise.
         """
         try:
-            os.makedirs(os.path.dirname(self.excel_output_path), exist_ok=True)
-            articles_dataframe.to_excel(self.excel_output_path, index=False)
+            os.makedirs(os.path.dirname(self._processed_excel_output_path), exist_ok=True)
+            articles_dataframe.to_excel(self._processed_excel_output_path, index=False)
             return True
         except Exception as e:
-            print(f"Error exporting to Excel {self.excel_output_path}: {e}")
+            print(f"Error exporting to Excel {self._processed_excel_output_path}: {e}")
             return False
