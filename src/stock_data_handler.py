@@ -1,13 +1,18 @@
-import datetime
-
-import pandas as pd
+import logging
 from pandas import DataFrame
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 class StockDataHandler:
     def __init__(self):
         self.csv_path: str = f"./data/processed/stock/stock_data.csv"
         self.excel_path: str = f"./data/processed/stock/stock_data.xlsx"
+        logger.info("StockDataHandler initialized with CSV path '%s' and Excel path '%s'", self.csv_path, self.excel_path)
 
     def export_to_csv(self, df: DataFrame) -> bool:
         """
@@ -22,10 +27,13 @@ class StockDataHandler:
         Raises:
             IOError: If there's an issue writing to the specified path
         """
+        logger.info("Exporting data to CSV at '%s'", self.csv_path)
         try:
             df.to_csv(self.csv_path, index=False, encoding='utf-8')
+            logger.info("Successfully exported data to CSV")
             return True
         except Exception as e:
+            logger.error("Error exporting data to CSV: %s", e)
             raise IOError(f"Error exporting data to CSV at {self.csv_path}: {e}")
 
     def export_to_excel(self, df: DataFrame) -> bool:
@@ -41,10 +49,13 @@ class StockDataHandler:
         Raises:
             IOError: If there's an issue writing to the specified path
         """
+        logger.info("Exporting data to Excel at '%s'", self.excel_path)
         try:
             df.to_excel(self.excel_path, index=False)
+            logger.info("Successfully exported data to Excel")
             return True
         except Exception as e:
+            logger.error("Error exporting data to Excel: %s", e)
             raise IOError(f"Error exporting data to Excel at {self.excel_path}: {e}")
 
     def export_to_all_formats(self, df: DataFrame) -> dict:
@@ -59,14 +70,18 @@ class StockDataHandler:
         """
         results = {}
 
+        logger.info("Starting export to all formats")
         try:
             results['csv'] = self.export_to_csv(df)
         except IOError as e:
+            logger.warning("CSV export failed: %s", e)
             results['csv'] = False
 
         try:
             results['excel'] = self.export_to_excel(df)
         except IOError as e:
+            logger.warning("Excel export failed: %s", e)
             results['excel'] = False
 
+        logger.info("Export results: %s", results)
         return results

@@ -1,7 +1,14 @@
 import pandas as pd
 import yfinance as yf
+import logging
 from typing import List, Optional
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 class YahooFinanceClient:
     """
@@ -33,12 +40,15 @@ class YahooFinanceClient:
 
         # Validate period and interval
         if period not in self.VALID_PERIODS:
+            logger.error(f"Invalid period: {period}")
             raise ValueError(f"Invalid period: {period}. Must be one of {self.VALID_PERIODS}")
         if interval not in self.VALID_INTERVALS:
+            logger.error(f"Invalid interval: {interval}")
             raise ValueError(f"Invalid interval: {interval}. Must be one of {self.VALID_INTERVALS}")
 
         self.period: str = period
         self.interval: str = interval
+        logger.info(f"YahooFinanceClient initialized for {self.stock_symbol} with period={self.period}, interval={self.interval}")
 
     def fetch_stock_data(self) -> pd.DataFrame:
         """
@@ -53,6 +63,7 @@ class YahooFinanceClient:
             ConnectionError: If there's a network issue connecting to Yahoo Finance
             Exception: For any other unexpected errors
         """
+        logger.info(f"Fetching data for {self.stock_symbol} (period={self.period}, interval={self.interval})")
         try:
             # Note: yfinance.download always returns a pandas DataFrame
             stock_data: pd.DataFrame = yf.download(
@@ -63,15 +74,20 @@ class YahooFinanceClient:
             )
 
             if stock_data.empty:
+                logger.warning(f"No data found for symbol: {self.stock_symbol}")
                 raise ValueError(f"No data found for symbol: {self.stock_symbol}")
 
+            logger.info(f"Successfully fetched data for {self.stock_symbol}")
             return stock_data
 
         except ValueError as e:
+            logger.error(f"ValueError fetching data for {self.stock_symbol}: {e}")
             raise ValueError(f"Value Error: {e}")
         except ConnectionError as e:
+            logger.error(f"ConnectionError fetching data for {self.stock_symbol}: {e}")
             raise ConnectionError(f"Failed to connect to Yahoo Finance: {str(e)}")
         except Exception as e:
+            logger.exception(f"Unexpected error fetching data for {self.stock_symbol}")
             raise Exception(f"Error fetching stock data: {str(e)}")
 
     def fetch_multiple_stocks(self, symbols: List[str]) -> pd.DataFrame:
@@ -88,6 +104,7 @@ class YahooFinanceClient:
             ValueError: If any symbol is invalid or no data is found
             ConnectionError: If there's a network issue connecting to Yahoo Finance
         """
+        logger.info(f"Fetching multiple stock data for symbols: {symbols} (period={self.period}, interval={self.interval})")
         try:
             # Join symbols with space for yfinance
             tickers = " ".join(symbols)
@@ -102,13 +119,18 @@ class YahooFinanceClient:
             )
 
             if stock_data.empty:
+                logger.warning(f"No data found for symbols: {symbols}")
                 raise ValueError(f"No data found for symbols: {symbols}")
 
+            logger.info(f"Successfully fetched data for symbols: {symbols}")
             return stock_data
 
         except ValueError as e:
+            logger.error(f"ValueError fetching multiple stock data: {e}")
             raise ValueError(f"Value Error: {e}")
         except ConnectionError as e:
+            logger.error(f"ConnectionError fetching multiple stock data: {e}")
             raise ConnectionError(f"Failed to connect to Yahoo Finance: {str(e)}")
         except Exception as e:
+            logger.exception(f"Unexpected error fetching multiple stock data")
             raise Exception(f"Error fetching stock data: {str(e)}")
