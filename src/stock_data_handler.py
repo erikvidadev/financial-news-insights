@@ -10,8 +10,8 @@ logger = logging.getLogger(__name__)
 
 class StockDataHandler:
     def __init__(self):
-        self.csv_path: str = f"./data/processed/stock/stock_data.csv"
-        self.excel_path: str = f"./data/processed/stock/stock_data.xlsx"
+        self.csv_path: str = f"./data/processed/stock_data.csv"
+        self.excel_path: str = f"./data/processed/stock_data.xlsx"
         logger.info(f"StockDataHandler initialized with CSV path {self.csv_path} and Excel path {self.excel_path}")
 
     def export_to_csv(self, df: DataFrame) -> bool:
@@ -77,11 +77,11 @@ class StockDataHandler:
             logger.warning(f"CSV export failed: {e}")
             results['csv'] = False
 
-        try:
+        """try:
             results['excel'] = self.export_to_excel(df)
         except IOError as e:
             logger.warning(f"Excel export failed: {e}")
-            results['excel'] = False
+            results['excel'] = False"""
 
         logger.info(f"Export results: {results}")
         return results
