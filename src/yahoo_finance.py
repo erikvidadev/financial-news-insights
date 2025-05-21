@@ -77,6 +77,8 @@ class YahooFinanceClient:
                 logger.warning(f"No data found for symbol: {self.stock_symbol}")
                 raise ValueError(f"No data found for symbol: {self.stock_symbol}")
 
+            stock_data = stock_data.reset_index()
+
             logger.info(f"Successfully fetched data for {self.stock_symbol}")
             return stock_data
 
@@ -88,49 +90,4 @@ class YahooFinanceClient:
             raise ConnectionError(f"Failed to connect to Yahoo Finance: {str(e)}")
         except Exception as e:
             logger.exception(f"Unexpected error fetching data for {self.stock_symbol}")
-            raise Exception(f"Error fetching stock data: {str(e)}")
-
-    def fetch_multiple_stocks(self, symbols: List[str]) -> pd.DataFrame:
-        """
-        Fetch data for multiple stock symbols using the same period and interval.
-
-        Args:
-            symbols (List[str]): List of ticker symbols to fetch
-
-        Returns:
-            pd.DataFrame: A pandas DataFrame containing data for all requested symbols
-
-        Raises:
-            ValueError: If any symbol is invalid or no data is found
-            ConnectionError: If there's a network issue connecting to Yahoo Finance
-        """
-        logger.info(f"Fetching multiple stock data for symbols: {symbols} (period={self.period}, interval={self.interval})")
-        try:
-            # Join symbols with space for yfinance
-            tickers = " ".join(symbols)
-
-            # Download data for multiple tickers
-            stock_data: pd.DataFrame = yf.download(
-                tickers=tickers,
-                period=self.period,
-                interval=self.interval,
-                group_by='ticker',  # Group columns by ticker
-                progress=False  # Disable progress bar
-            )
-
-            if stock_data.empty:
-                logger.warning(f"No data found for symbols: {symbols}")
-                raise ValueError(f"No data found for symbols: {symbols}")
-
-            logger.info(f"Successfully fetched data for symbols: {symbols}")
-            return stock_data
-
-        except ValueError as e:
-            logger.error(f"ValueError fetching multiple stock data: {e}")
-            raise ValueError(f"Value Error: {e}")
-        except ConnectionError as e:
-            logger.error(f"ConnectionError fetching multiple stock data: {e}")
-            raise ConnectionError(f"Failed to connect to Yahoo Finance: {str(e)}")
-        except Exception as e:
-            logger.exception(f"Unexpected error fetching multiple stock data")
             raise Exception(f"Error fetching stock data: {str(e)}")

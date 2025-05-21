@@ -43,7 +43,7 @@ class NewsSentimentAnalyzer:
 
     def __init__(
             self,
-            full_output_path: str = "./data/sentiment/news_sentiment_analysis_result.csv",
+            full_output_path: str = "./data/processed/articles_with_sentiment_score.csv",
     ) -> None:
         """
         Initialize the sentiment analyzer.

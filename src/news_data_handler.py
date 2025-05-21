@@ -62,7 +62,7 @@ class NewsDataHandler:
             file_path: Path to the JSON file containing news data.
 
         Returns:
-            DataFrame containing the processed news articles.
+            DataFrame containing the cleaned news articles.
 
         Raises:
             FileNotFoundError: If the specified file does not exist.

@@ -13,7 +13,18 @@ articles_from_newsAPI = NewsApiClient(
 
 news_data_handler = NewsDataHandler()
 
+articles = articles_from_newsAPI.extract_full_articles()
+raw_articles = news_data_handler.save_raw_data(articles)
+processed_articles = news_data_handler.process_raw_data(raw_articles)
+news_data_handler.export_articles(processed_articles)
+
+
 news_sentiment_analyzer = NewsSentimentAnalyzer()
+
+news_sentiment_analysis = news_sentiment_analyzer.calculate_articles_sentiment(processed_articles)
+news_sentiment_analyzer.export_to_csv(news_data=news_sentiment_analysis)
+
+
 
 stock_data_from_yahoo = YahooFinanceClient(
     stock_symbol="AAPL",
@@ -22,16 +33,6 @@ stock_data_from_yahoo = YahooFinanceClient(
 )
 
 stock_data_handler = StockDataHandler()
-
-
-articles = articles_from_newsAPI.extract_full_articles()
-raw_articles = news_data_handler.save_raw_data(articles)
-processed_articles = news_data_handler.process_raw_data(raw_articles)
-
-news_data_handler.export_articles(processed_articles)
-
-news_sentiment_analysis = news_sentiment_analyzer.calculate_articles_sentiment(processed_articles)
-news_sentiment_analyzer.export_to_csv(news_data=news_sentiment_analysis)
 
 stocks = stock_data_from_yahoo.fetch_stock_data()
 stock_data_handler.export_to_all_formats(stocks)
