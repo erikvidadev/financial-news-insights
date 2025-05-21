@@ -1,23 +1,139 @@
-import nltk
-nltk.download("vader_lexicon")
+import logging
+from pathlib import Path
 
+import nltk
 import pandas as pd
+from pandas import DataFrame
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
-# Tisztított hírek beolvasása
-news_df = pd.read_csv("../data/clean/news/clean_news_data.csv")
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
-# VADER inicializálása
-sid = SentimentIntensityAnalyzer()
 
-# Minden hírszövegre kiszámítjuk a compound értéket
-news_df["sentiment"] = news_df["full_text"].apply(lambda x: sid.polarity_scores(str(x))["compound"])
+class NLTKResourceManager:
+    """Manages downloading and verifying NLTK resources."""
 
-# Dátum biztosítása
-news_df["date"] = pd.to_datetime(news_df["publishedAt"]).dt.date
+    _vader_lexicon_downloaded = False
 
-# Napi szinten átlagoljuk a hangulatot
-daily_sentiment = news_df.groupby("date")["sentiment"].mean().reset_index()
+    @classmethod
+    def ensure_vader_lexicon(cls) -> None:
+        """
+        Ensure the VADER lexicon resource is downloaded.
 
-# Kimeneti fájl mentése
-daily_sentiment.to_csv("../data/clean/news/sentiment_news_data.csv", index=False)
+        This method downloads the VADER lexicon if not already present
+        in the NLTK data directory.
+        """
+        if cls._vader_lexicon_downloaded:
+            return
+
+        try:
+            nltk.data.find('sentiment/vader_lexicon.zip')
+            cls._vader_lexicon_downloaded = True
+        except LookupError:
+            logger.info("Downloading VADER lexicon")
+            nltk.download("vader_lexicon", quiet=True)
+            cls._vader_lexicon_downloaded = True
+
+
+class NewsSentimentAnalyzer:
+    """Performs sentiment analysis on news article text."""
+
+    def __init__(
+            self,
+            full_output_path: str = "./data/sentiment/news_sentiment_analysis_result.csv",
+            daily_output_path: str = "./data/sentiment/news_daily_avg_score.csv"
+    ) -> None:
+        """
+        Initialize the sentiment analyzer.
+
+        Args:
+            full_output_path: Path to save the full sentiment analysis results
+            daily_output_path: Path to save the daily aggregated sentiment results
+        """
+        NLTKResourceManager.ensure_vader_lexicon()
+
+        self._sentiment_analyzer = SentimentIntensityAnalyzer()
+        self._full_output_path = full_output_path
+        self._daily_output_path = daily_output_path
+
+        Path(self._full_output_path).parent.mkdir(parents=True, exist_ok=True)
+        Path(self._daily_output_path).parent.mkdir(parents=True, exist_ok=True)
+
+    def calculate_articles_sentiment(self, news_data: DataFrame) -> DataFrame:
+        """
+        Calculate sentiment for each article and store it in the dataframe.
+
+        Args:
+            news_data: DataFrame containing news articles with at least 'full_text'
+                      and 'publishedAt' columns
+
+        Returns:
+            DataFrame with added 'sentiment' and 'date' columns
+
+        Raises:
+            ValueError: If required columns are missing
+        """
+        required_columns = ["full_text", "publishedAt"]
+        missing_columns = [col for col in required_columns if col not in news_data.columns]
+        if missing_columns:
+            raise ValueError(f"Missing required columns: {', '.join(missing_columns)}")
+
+        result_data = news_data.copy()
+
+        logger.info("Calculating sentiment for %d articles", len(result_data))
+        result_data["sentiment"] = result_data["full_text"].apply(
+            lambda x: self._sentiment_analyzer.polarity_scores(str(x))["compound"]
+        )
+
+        result_data["date"] = pd.to_datetime(result_data["publishedAt"]).dt.date
+        return result_data
+
+    def calculate_daily_average_sentiment(self, news_data_with_sentiment: DataFrame) -> DataFrame:
+        """
+        Group sentiment by date and return daily average sentiment.
+
+        Args:
+                news_data_with_sentiment: DataFrame with 'date' and 'sentiment' columns
+
+        Returns:
+            DataFrame with daily average sentiment
+
+        Raises:
+            ValueError: If required columns are missing
+        """
+        required_columns = ["date", "sentiment"]
+        missing_columns = [col for col in required_columns if col not in news_data_with_sentiment.columns]
+        if missing_columns:
+            raise ValueError(f"Missing required columns: {', '.join(missing_columns)}")
+
+        logger.info("Calculating daily average sentiment")
+        daily_sentiment = news_data_with_sentiment.groupby("date")["sentiment"].mean().reset_index()
+
+        return daily_sentiment
+
+    def export_to_csv(self, news_data: DataFrame, daily_sentiment: DataFrame) -> None:
+        """
+        Export both detailed and aggregated sentiment data to CSV files.
+
+        Args:
+            news_data: DataFrame with article-level sentiment data
+            daily_sentiment: DataFrame with daily aggregated sentiment data
+
+        Raises:
+            IOError: If there's an issue writing the files
+        """
+        try:
+            if self._full_output_path:
+                logger.info(f"Exporting detailed sentiment data to {self._full_output_path}")
+                news_data.to_csv(self._full_output_path, index=False)
+
+            if self._daily_output_path:
+                logger.info(f"Exporting daily sentiment data to {self._daily_output_path}")
+                daily_sentiment.to_csv(self._daily_output_path, index=False)
+
+        except Exception as e:
+            logger.error(f"Error exporting data: {str(e)}")
+            raise IOError(f"Failed to export sentiment data: {str(e)}") from e
