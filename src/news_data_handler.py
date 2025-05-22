@@ -151,7 +151,16 @@ class NewsDataHandler:
         """
         try:
             os.makedirs(os.path.dirname(self.processed_csv_output_path), exist_ok=True)
-            articles_dataframe.to_csv(self.processed_csv_output_path, index=False, encoding='utf-8')
+
+            file_exists = os.path.isfile(self.processed_csv_output_path)
+
+            articles_dataframe.to_csv(
+                self.processed_csv_output_path,
+                mode='a' if file_exists else 'w',
+                header=not file_exists,
+                index=False,
+                encoding='utf-8'
+            )
             logger.info(f"Data exported to CSV at: {self.processed_csv_output_path}")
             return True
         except Exception as e:

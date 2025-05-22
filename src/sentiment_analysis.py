@@ -1,4 +1,5 @@
 import logging
+import os
 from pathlib import Path
 
 import nltk
@@ -99,8 +100,20 @@ class NewsSentimentAnalyzer:
         """
         try:
             if self._full_output_path:
-                logger.info(f"Exporting detailed sentiment data to {self._full_output_path}")
-                news_data.to_csv(self._full_output_path, index=False)
+                os.makedirs(os.path.dirname(self._full_output_path), exist_ok=True)
+
+                file_exists = os.path.isfile(self._full_output_path)
+
+                logger.info(f"Exporting detailed sentiment data to {self._full_output_path} "
+                            f"({'appending' if file_exists else 'writing new file'})")
+
+                news_data.to_csv(
+                    self._full_output_path,
+                    mode='a' if file_exists else 'w',
+                    header=not file_exists,
+                    index=False,
+                    encoding='utf-8'
+                )
 
         except Exception as e:
             logger.error(f"Error exporting data: {str(e)}")
