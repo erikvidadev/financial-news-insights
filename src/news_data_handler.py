@@ -155,11 +155,7 @@ class NewsDataHandler:
             file_exists = os.path.isfile(self.processed_csv_output_path)
 
             articles_dataframe.to_csv(
-                self.processed_csv_output_path,
-                mode='a' if file_exists else 'w',
-                header=not file_exists,
-                index=False,
-                encoding='utf-8'
+                self.processed_csv_output_path
             )
             logger.info(f"Data exported to CSV at: {self.processed_csv_output_path}")
             return True

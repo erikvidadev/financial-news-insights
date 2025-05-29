@@ -108,11 +108,7 @@ class NewsSentimentAnalyzer:
                             f"({'appending' if file_exists else 'writing new file'})")
 
                 news_data.to_csv(
-                    self._full_output_path,
-                    mode='a' if file_exists else 'w',
-                    header=not file_exists,
-                    index=False,
-                    encoding='utf-8'
+                    self._full_output_path
                 )
 
         except Exception as e:

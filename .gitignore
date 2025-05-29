@@ -3,5 +3,7 @@
 .env
 .data/DS_Store
 .DS_Store
-data
 src/__pychache__
+ src/__pycache__/
+data/.DS_Store
+

@@ -4,7 +4,6 @@ from src.sentiment_analysis import NewsSentimentAnalyzer
 from src.stock_data_handler import StockDataHandler
 from src.yahoo_finance import YahooFinanceClient
 
-
 articles_from_newsAPI = NewsApiClient(
     search_query="apple",
     categories="tech",
@@ -23,7 +22,6 @@ news_sentiment_analyzer = NewsSentimentAnalyzer()
 
 news_sentiment_analysis = news_sentiment_analyzer.calculate_articles_sentiment(processed_articles)
 news_sentiment_analyzer.export_to_csv(news_data=news_sentiment_analysis)
-
 
 
 stock_data_from_yahoo = YahooFinanceClient(
